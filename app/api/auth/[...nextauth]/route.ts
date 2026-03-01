@@ -1,4 +1,5 @@
-import NextAuth from "next-auth";
+import NextAuth, { User, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
 
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -31,7 +32,7 @@ export const authOptions = {
               id: user.access_token, // or some decoded id
               email: credentials?.email,
               backendToken: user.access_token,
-            } as any;
+            } as unknown as User;
           }
           return null;
         } catch (e) {
@@ -42,13 +43,13 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({ token, user }: { token: JWT & { backendToken?: string }; user?: User & { backendToken?: string } }) {
       if (user) {
         token.backendToken = user.backendToken;
       }
       return token;
     },
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }: { session: Session & { backendToken?: string }; token: JWT & { backendToken?: string } }) {
       session.backendToken = token.backendToken;
       return session;
     },

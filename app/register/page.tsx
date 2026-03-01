@@ -31,10 +31,14 @@ export default function RegisterPage() {
             if (res.status === 201 || res.status === 200) {
                 router.push("/login");
             }
-        } catch (err: any) {
-            setError(
-                err.response?.data?.message || err.message || "An unexpected error occurred"
-            );
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.message || err.message || "An unexpected error occurred");
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("An unexpected error occurred");
+            }
         } finally {
             setIsLoading(false);
         }
