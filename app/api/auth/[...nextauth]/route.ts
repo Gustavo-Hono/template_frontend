@@ -19,7 +19,7 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          const res = await axios.post("http://localhost:3000/auth/login", {
+          const res = await axios.post("http://localhost:8080/auth/login", {
             email: credentials?.email,
             password: credentials?.password,
           });
